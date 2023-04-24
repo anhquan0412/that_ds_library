@@ -12,7 +12,6 @@ description = "A useful package for EDA and quick ML model finetuning"
 readme = "README.md"
 requires-python = ">=3.7"
 license = {file = "LICENSE"}
-license = {text = "MIT License"}
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
