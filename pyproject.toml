@@ -7,14 +7,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "thatdslibrary"
-version = "0.1.0"
+version = "0.1.1"
 description = "A useful package for EDA and quick ML model finetuning"
 readme = "README.md"
 authors = [
     {name = "Quan Tran", email = "anhquan0412@gmail.com"}
 ]
 homepage = "https://github.com/anhquan0412/that_ds_library"
-license = { file = "LICENSE" }
+license = "MIT"
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
