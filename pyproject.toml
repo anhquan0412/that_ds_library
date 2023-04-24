@@ -14,7 +14,7 @@ authors = [
     {name = "Quan Tran", email = "anhquan0412@gmail.com"}
 ]
 homepage = "https://github.com/anhquan0412/that_ds_library"
-license = "Apache License 2.0"
+license = { file = "LICENSE" }
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
