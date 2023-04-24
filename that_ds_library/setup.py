@@ -30,7 +30,7 @@ setup(
         "matplotlib>=3.7.0",
         "pandas>=1.5.0",
         "plotly>=5.14.0",
-        "dtreeviz>=2.2,
+        "dtreeviz>=2.2",
         "graphviz>=0.20",
         "seaborn>=0.12.0",
         "statsmodels>=0.13.0",
