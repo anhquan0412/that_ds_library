@@ -1,0 +1,8 @@
+.ipynb_checkpoints
+__pycache__/
+.vscode
+lib/
+data/
+*_weights
+pickle_files/
+wandb/
