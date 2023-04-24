@@ -6,7 +6,7 @@ setup(
     author="Quan Tran",
     author_email="anhquan0412@gmail.com",
     description="A useful package for EDA and quick ML model finetuning",
-    long_description=open("README.md").read()
+    long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     url="https://github.com/anhquan0412/that_ds_library",
     packages=find_packages(),
