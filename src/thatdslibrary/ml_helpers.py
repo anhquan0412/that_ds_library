@@ -5,34 +5,28 @@ from sklearn.ensemble import RandomForestClassifier,AdaBoostClassifier
 from sklearn.metrics import f1_score,accuracy_score,classification_report,log_loss
 import numpy as np
 import pandas as pd
-import statsmodels
+import statsmodels.api as sm
 from thatdslibrary.chart_plotting import plot_confusion_matrix,plot_permutation_importances
 
-def run_logistic_regression(df,y_col,multi_class='multinomial',solver='newton-cg',max_iter=10000):
-    # only for multinomial classification
-    y_true = df[y_col].values
-    df_trn = df.drop(y_col,axis=1)
-    model = LogisticRegression(random_state=0, multi_class=multi_class, penalty=None, solver=solver,max_iter=10000).fit(df_trn, y_true)
-    preds = model.predict(df_trn)
-    prob_preds = model.predict_proba(df_trn)
+def run_logistic_regression(X_trn,y_trn,multi_class='multinomial',solver='newton-cg',penalty=None,max_iter=10000):
+    model = LogisticRegression(random_state=0, multi_class=multi_class, 
+                               penalty=penalty, solver=solver,max_iter=max_iter).fit(X_trn, y_trn)
+    preds = model.predict(X_trn)
+    prob_preds = model.predict_proba(X_trn)
     print('-'*100)
     print('Intercept: \n', model.intercept_)
     print('Coefficients: \n', model.coef_)
     print('Coefficients exp :\n',np.exp(model.coef_))
 
     print('-'*100)
-    print('Log loss: ',log_loss(y_true,prob_preds))
+    print('Log loss: ',log_loss(y_trn,prob_preds))
     print('-'*100)
-    print(classification_report(y_true,preds))
+    print(classification_report(y_trn,preds))
 
-def run_multinomial_statmodel(df,y_col,add_constant=False):
-    y_trn = df[y_col].values
-    df_trn = df.drop(y_col,axis=1)
-
+def run_multinomial_statmodel(X_trn,y_trn,add_constant=False):
     if add_constant:
-        df_trn = statsmodels.api.add_constant(df_trn)
-    logit_model=statsmodels.api.MNLogit(y_trn,df_trn)
-    print(logit_model)
+        X_trn = sm.add_constant(X_trn)
+    logit_model=sm.MNLogit(y_trn,X_trn)
     result=logit_model.fit()
     stats1=result.summary()
     print(stats1)
@@ -40,20 +34,15 @@ def run_multinomial_statmodel(df,y_col,add_constant=False):
     print('-'*100)
     print('Log loss: ',log_loss(y_trn,prob_preds))
     print('-'*100)
-    print(classification_report(y_trn,np.argmax(prob_preds,axis=1)+1))
+    print(classification_report(y_trn,np.argmax(prob_preds,axis=1)))
 
 
-def run_sklearn_classification_model(model_name,model_params,df,y_col,y_classes,val_ratio=0.2,seed=42,plot_fea_imp=True):
-    df = df.copy().reset_index(drop=True)
-    df_trn = df.drop(y_col,axis=1)
-    # trn_cols = df.drop(y_col,axis=1).columns.values
+def run_sklearn_classification_model(model_name,model_params,X_trn,y_trn,y_classes,val_ratio=0.2,seed=42,plot_fea_imp=True):
     np.random.seed(seed)
-    if val_ratio is None:
-        y_trn = df[y_col].values
-        X_trn = df_trn.values
-    else:
-        X_trn,X_test,y_trn,y_test = train_test_split(df_trn.values,df[y_col].values,test_size=val_ratio,random_state=seed)
+    if val_ratio is not None:
+        X_trn,X_test,y_trn,y_test = train_test_split(X_trn,y_trn,test_size=val_ratio,random_state=seed)
     
+
     if model_name=='DT':
         _model = DecisionTreeClassifier(random_state=seed,**model_params)
     elif model_name=='AdaBoost':
@@ -95,16 +84,12 @@ def run_sklearn_classification_model(model_name,model_params,df,y_col,y_classes,
     
     if plot_fea_imp:
         # plot_feature_importances(_model.feature_importances_,trn_df.columns.values)
-        _ = plot_permutation_importances(_model,df_trn,
-                                y_trn)
+        _ = plot_permutation_importances(_model,X_trn,y_trn)
     
     return _model,prob_trn
 
 
-def tune_sklearn_classification_model(model_name,param_grid,df,y_col,custom_cv=5,random_cv_iter=None,seed=42,rank_show=10):
-    y_trn = df[y_col].values
-    df_trn = df.drop(y_col,axis=1)
-
+def tune_sklearn_classification_model(model_name,param_grid,X_trn,y_trn,custom_cv=5,random_cv_iter=None,seed=42,rank_show=10):
     if model_name=='DT':
         _model = DecisionTreeClassifier(random_state=seed)
     elif model_name=='AdaBoost':
@@ -116,7 +101,7 @@ def tune_sklearn_classification_model(model_name,param_grid,df,y_col,custom_cv=5
         print('Unsupported model')
         return
     
-    search_cv,default_cv = do_param_search(df_trn,y_trn,_model,param_grid,cv=custom_cv,scoring=['f1_macro','accuracy'],random_cv_iter = random_cv_iter,seed=seed)
+    search_cv,default_cv = do_param_search(X_trn,y_trn,_model,param_grid,cv=custom_cv,scoring=['f1_macro','accuracy'],random_cv_iter = random_cv_iter,seed=seed)
     show_both_cv(search_cv,default_cv,'f1_macro',rank_show)
     return search_cv
 

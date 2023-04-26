@@ -17,9 +17,7 @@ def get_vif(df,plot_corr=False):
 
     df_const = add_constant(df)    
     vif = pd.Series([variance_inflation_factor(df_const.values, i) 
-                    for i in range(df_const.shape[1])], 
-                index=df_const.columns)
-    print(vif)
+                    for i in range(df_const.shape[1])], index=df_const.columns)
     return vif
 
 

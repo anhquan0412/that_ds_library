@@ -199,15 +199,19 @@ def params_3D_heatmap(search_cv,param1,param2,param3,scoring,log_param1=False,lo
     fig.show()
 
 
-def plot_tree_dtreeviz(estimator,X,y,target_name,class_names,tree_index=0,depth_range_to_display=None,fancy=False,new_window=False):
-    viz = dtreeviz.model(estimator,X,y,target_name=target_name,feature_names=X.columns.values,
-                   class_names=class_names,depth_range_to_display=depth_range_to_display,
-                  orientation='LR',instance_orientation='LR',fancy=fancy)
-    if new_window:
-        viz.view()
-    return viz
+def plot_tree_dtreeviz(estimator,X,y,target_name,class_names,tree_index=0,depth_range_to_display=None,fancy=False,scale=1.0):
+    viz = dtreeviz.model(estimator,X,y,tree_index=tree_index,target_name=target_name,
+                        feature_names=X.columns.values,
+                        class_names=class_names,
+                        )
+    # return viz
+    
+    return viz.view(depth_range_to_display=depth_range_to_display,
+         orientation='LR',
+         instance_orientation='LR',fancy=fancy,scale=scale)
+    
 
-def plot_tree_sklearn(estimator,feature_names,class_names,size=30,ratio=0.2,rotate=True,fname='tmp'):
+def plot_tree_sklearn(estimator,feature_names,class_names,rotate=True,fname='tmp'):
     s = export_graphviz(estimator,out_file=None,feature_names=feature_names,filled=True,class_names=class_names,
                        special_characters=True,rotate=rotate,rounded=True)
     graph = graphviz.Source(s,format='png')
@@ -223,7 +227,7 @@ def plot_feature_importances(importances,col_names,figsize=(20,10),top_n=None):
 
 
 def plot_permutation_importances(best_model,X,y,scoring=['f1_macro'],n_repeats=10,seed=42,top_n=None,figsize=(20,10)):
-    r_multi = permutation_importance(best_model, X, y, n_repeats=n_repeats, random_state=42, scoring=scoring)
+    r_multi = permutation_importance(best_model, X, y, n_repeats=n_repeats, random_state=seed, scoring=scoring)
     fea_imp_dfs=[]
     for metric in r_multi.keys():
         print(f"{metric}")
@@ -283,7 +287,7 @@ def draw_sankey(data, target,chart_name,save_name=None):
 def pdp_numerical_only(best_model,df,num_features,y_class,y_colors=None,ncols=2,nrows=2,figsize=(20,16)):
     common_params = {
     "subsample": 40,
-    "n_jobs": 2,
+    "n_jobs": -1,
     "grid_resolution": 100,
     "random_state": 42,
     }
@@ -362,7 +366,7 @@ def pdp_categorical_only(best_model,df,cat_feature,y_class,y_colors=None,ymax=0.
 def plot_ice_pair(best_model,df,pair_features,class_idx,figsize=(10,4)):
     common_params = {
         "subsample": 40,
-        "n_jobs": 2,
+        "n_jobs": -1,
         "grid_resolution": 100,
         "random_state": 42,
     }
