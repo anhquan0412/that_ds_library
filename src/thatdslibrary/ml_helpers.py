@@ -6,7 +6,7 @@ from sklearn.metrics import f1_score,accuracy_score,classification_report,log_lo
 import numpy as np
 import pandas as pd
 import statsmodels
-from chart_plotting import plot_confusion_matrix,plot_permutation_importances
+from thatdslibrary.chart_plotting import plot_confusion_matrix,plot_permutation_importances
 
 def run_logistic_regression(df,y_col,multi_class='multinomial',solver='newton-cg',max_iter=10000):
     # only for multinomial classification

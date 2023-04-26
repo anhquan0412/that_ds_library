@@ -1,3 +1,4 @@
+from pathlib import Path
 import numpy as np
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 from sklearn.model_selection import learning_curve,validation_curve
@@ -5,7 +6,7 @@ import matplotlib.pyplot as plt
 from sklearn.inspection import PartialDependenceDisplay, permutation_importance
 import pandas as pd
 import plotly.express as px
-from dtreeviz.trees import *
+import dtreeviz
 from sklearn.tree import export_graphviz
 import graphviz
 from matplotlib.cm import get_cmap
@@ -198,8 +199,8 @@ def params_3D_heatmap(search_cv,param1,param2,param3,scoring,log_param1=False,lo
     fig.show()
 
 
-def plot_tree_dtreeviz(estimator,X,y,target_name,class_names,depth_range_to_display=None,fancy=False,new_window=False):
-    viz = dtreeviz(estimator,X,y,target_name=target_name,feature_names=X.columns.values,
+def plot_tree_dtreeviz(estimator,X,y,target_name,class_names,tree_index=0,depth_range_to_display=None,fancy=False,new_window=False):
+    viz = dtreeviz.model(estimator,X,y,target_name=target_name,feature_names=X.columns.values,
                    class_names=class_names,depth_range_to_display=depth_range_to_display,
                   orientation='LR',instance_orientation='LR',fancy=fancy)
     if new_window:
